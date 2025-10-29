@@ -1,0 +1,99 @@
+<!-- ROLE-PEOPLE-INCLUDE-UPDATED (revised to match grouped roles: faculty, phd, grad, ugrad, alum, collab) -->
+{% assign role-key = include.role %}
+
+{%- comment -%}
+  Support both map and array formats for site.data.people,
+  normalize into raw_people (array of person objects).
+{%- endcomment -%}
+{% assign raw_people = "" | split: "," %}
+{% if site.data.people %}
+  {% if site.data.people | kind_of == "array" %}
+    {% assign raw_people = site.data.people %}
+  {% else %}
+    {% for item in site.data.people %}
+      {% assign raw_people = raw_people | push: item[1] %}
+    {% endfor %}
+  {% endif %}
+{% endif %}
+
+{%- comment -%}
+  Find the matching role object in site.roles so we can use its
+  friendly name (r.name) for the section heading and class.
+{%- endcomment -%}
+{% assign matched_role = nil %}
+{% for r in site.roles %}
+  {% if r.key == role-key %}
+    {% assign matched_role = r %}
+    {% break %}
+  {% endif %}
+{% endfor %}
+
+{%- if matched_role -%}
+  <h3 id="{{ matched_role.key }}" class="pt-3"> {{ matched_role.name }} </h3>
+  <div class="role {{ matched_role.key }}">
+    {% assign people_list = "" | split: "," %}
+
+    {%- comment -%}
+      Collect people that match the role-key.
+      - Supports person.role as a string (comma-separated) or an array.
+      - Trims whitespace when splitting strings.
+    {%- endcomment -%}
+    {% for person in raw_people %}
+      {% if person %}
+        {% assign roles_of_person = person.role %}
+        {% if roles_of_person %}
+          {% if roles_of_person | kind_of == "string" %}
+            {% assign roles_arr = roles_of_person | split: "," | map: "strip" %}
+          {% else %}
+            {% assign roles_arr = roles_of_person %}
+          {% endif %}
+
+          {%- comment -%}
+            roles_arr may contain values like "phd", "phd,collab", etc.
+            Support exact match with role-key. Also allow common synonyms:
+            e.g., treat "ph.d" or "ph.d." as "phd" by normalizing.
+          {%- endcomment -%}
+          {% assign normalized_roles = "" | split: "," %}
+          {% for rr in roles_arr %}
+            {% assign rr_norm = rr | downcase | strip %}
+            {% if rr_norm == "ph.d" or rr_norm == "ph.d." %}
+              {% assign rr_norm = "phd" %}
+            {% endif %}
+            {% assign normalized_roles = normalized_roles | push: rr_norm %}
+          {% endfor %}
+
+          {% if normalized_roles contains role-key %}
+            {% assign people_list = people_list | push: person %}
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+    {%- comment -%}
+      Sort by display_name if present; fall back to key or empty string.
+    {%- endcomment -%}
+    {% assign people_list = people_list | sort: "display_name" %}
+
+    {% if people_list.size > 0 %}
+      {% for p in people_list %}
+        {%- comment -%}
+          Pass include.image through to person.html if provided; person.html can
+          decide whether to use p.image or the override image.
+        {%- endcomment -%}
+        {% include person.html person=p image=include.image %}
+      {% endfor %}
+    {% else %}
+      <p class="text-muted">No entries.</p>
+    {% endif %}
+  </div>
+{% else %}
+  {%- comment -%}
+    If the requested role-key isn't defined in site.roles, show a helpful message.
+    This keeps templates predictable if you change role keys in your data file.
+  {%- endcomment -%}
+  <h3 id="{{ role-key }}" class="pt-3"> {{ role-key | capitalize }} </h3>
+  <div class="role {{ role-key }}">
+    <p class="text-muted">No entries or role not defined in site.roles.</p>
+  </div>
+{% endif %}
+

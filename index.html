@@ -1,0 +1,178 @@
+---
+layout: default
+title: Home
+notitle: true
+
+# groups of columns of {roles: list, width: num, image: bool}
+role-tables:
+- - roles: [faculty]
+    width: 4
+    image: true
+  - roles: [phd, grad]
+    width: 8
+    image: true
+- - roles: [ugrad, collab]
+    width: 5
+    image: false
+  - roles: [alum]
+    width: 7
+    image: false
+
+---
+
+
+<!-- Page content (paste after the front-matter above) -->
+<style>
+.jumbotron p {
+  letter-spacing: 0.2px;
+  word-spacing: 0.5px;
+}
+/* Jumbotron text size override: tweak font-size as desired */
+.jumbotron p { font-size: 0.95rem; line-height: 1.45; }
+
+/* optional smaller lead style you can use elsewhere */
+.jumbotron .lead-sm { font-size: 0.95rem; color: #333; }
+
+/* keep people blocks visually tidy (adjust or move to your css file) */
+.people .role { margin-bottom: 1.25rem; }
+.person { margin: 0.5rem 0; }
+.profile { width: 64px; height: 64px; object-fit: cover; border-radius: 50%; }
+.role-title { border-bottom: 1px solid #eee; margin-bottom: .75rem; padding-bottom: .4rem; }
+.news-sidebar h5 {
+  font-size: 0.95rem;   /* smaller than Bootstrap default (1.25rem) */
+  font-weight: 600;     /* keep them readable */
+  margin-bottom: 0.25rem;
+  line-height: 1.3;
+}
+
+/* Optional: smaller date line too */
+.news-sidebar .date {
+  font-size: 0.85rem;
+  color: #666;
+}
+</style>
+
+
+
+
+<section class="row align-items-start">
+  <!-- Left column: Lab description + Sponsors -->
+  <div class="col-md-8">
+    <div class="jumbotron py-4 px-4 mb-4">
+      <h2 class="mb-3">Welcome to the <b>WiNSys Lab</b></h2>
+      <p style="font-size:0.95rem; line-height:1.5;">
+        The <b>WiNSys</b> (Wireless, Networking and Systems) <b>Lab@IIT Madras</b> focuses on tackling key networking challenges faced in developing regions such as India - including intermittent connectivity, limited bandwidth, and dense WiFi deployments. Our research spans enhancing user experience under constrained networks, designing practical and scalable networking solutions, optimizing radio resource management for high-density environments, and developing non-intrusive wireless sensing techniques for next-generation applications.
+
+The lab’s work has been recognized internationally, with publications in premier venues such as <b>Ubicomp, IEEE Transactions on Network and Service Management (TNSM), NeurIPS, ICMI, COMSNETS and IFIP Networking</b>. We believe in building real systems and prototypes that bridge the gap between research and deployment — <b>come join us in creating the networks of tomorrow!</b>
+      </p>
+    </div>
+
+    <!-- Sponsors section (below lab description) -->
+    <section class="sponsors mb-4">
+      <h2 class="h5 mb-3">Our Sponsors</h2>
+
+      <div class="card">
+        <div class="card-body">
+          <p class="mb-3">
+            We gratefully acknowledge support from the following organizations.
+          </p>
+
+          <div class="row align-items-center">
+		  {%- if site.data.sponsors and site.data.sponsors.size > 0 -%}
+		    {% for sponsor in site.data.sponsors %}
+		      <div class="col-6 col-md-6 text-center mb-4">
+			{% include sponsor-card.html sponsor=sponsor %}
+		      </div>
+		    {% endfor %}
+		  {%- else -%}
+		    <div class="col-12">
+		      <p class="text-muted small mb-0">No sponsors listed yet.</p>
+		    </div>
+		  {%- endif -%}
+	</div>
+        </div>
+      </div>
+    </section>
+  </div> <!-- ✅ closes left col-md-8 -->
+
+  <!-- Right column: News -->
+  <div class="col-md-4">
+    <section class="news-sidebar mb-4">
+      <h2 class="h5 mb-3">News</h2>
+      <ul class="news list-unstyled">
+        {% for post in site.posts limit: site.front_page_news %}
+          {% include news-item.html item=post %}
+        {% endfor %}
+      </ul>
+
+      {% assign numposts = site.posts | size %}
+      {% if numposts >= 1 %}
+        <p class="mt-2">
+          <span class="fa fa-fw fa-history"></span>
+          <a href="{{ '/blog/' | relative_url }}">Older posts&hellip;</a>
+        </p>
+      {% endif %}
+    </section>
+  </div>
+</section>
+
+<section class="location mb-4">
+  <h2 class="h5 mb-3">Location</h2>
+
+  {% assign loc = site.data.location %}
+  {% if loc %}
+    <div class="card">
+      <div class="card-body">
+        <div class="row">
+          <div class="col-md-6">
+            <h6 class="mb-2">{{ loc.name }}</h6>
+            <address class="mb-2">
+              {% for line in loc.address %}
+                {{ line }}<br/>
+              {% endfor %}
+            </address>
+
+            {% if loc.phone %}
+              <p class="mb-1"><strong>Phone:</strong> <a href="tel:{{ loc.phone | replace: ' ', '' }}">{{ loc.phone }}</a></p>
+            {% endif %}
+            {% if loc.email %}
+              <p class="mb-2"><strong>Email:</strong> <a href="mailto:{{ loc.email }}">{{ loc.email }}</a></p>
+            {% endif %}
+
+            {% if loc.directions_link %}
+              <p class="mt-2"><a class="btn btn-sm btn-outline-primary" href="{{ loc.directions_link }}" target="_blank" rel="noopener">Get directions</a></p>
+            {% endif %}
+          </div>
+
+          <div class="col-md-6">
+            {%- if loc.maps_embed_url and loc.maps_embed_url != "" -%}
+              <div class="map-wrapper" style="width:100%;height:220px;">
+                <iframe
+                  src="{{ loc.maps_embed_url }}"
+                  width="100%" height="100%" style="border:0;"
+                  allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+              </div>
+            {%- elsif loc.lat and loc.lng -%}
+              <div class="map-wrapper" style="width:100%;height:220px;">
+                <iframe
+                  src="https://www.google.com/maps?q={{ loc.lat }},{{ loc.lng }}&hl=en&z=14&output=embed"
+                  width="100%" height="100%" style="border:0;"
+                  allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
+                </iframe>
+              </div>
+            {%- else -%}
+              <div class="text-muted small">Map is not available. Please add `maps_embed_url` or `lat`/`lng` to <code>_data/location.yml</code>.</div>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    </div>
+  {% else %}
+    <p class="text-muted small mb-0">Location information not set. Add <code>_data/location.yml</code>.</p>
+  {% endif %}
+</section>
+
+
+
+

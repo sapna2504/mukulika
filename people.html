@@ -1,0 +1,46 @@
+---
+layout: default
+title: "People"
+
+picture-role-groups:
+- {roles: [faculty, phd], width: 4}
+- {roles: [grad, ugrad], width: 8}
+
+no-picture-role-groups:
+- {roles: [collab, alum], width: 5}
+---
+
+<section class="people row justify-content-between">
+  {% for role-group in page.picture-role-groups %}
+    <div class="col-md-{{ role-group.width }}">
+      {% for role in role-group.roles %}
+        {%- assign matching = site.roles | where: "key", role -%}
+        {% if matching.size > 0 %}
+          {% include role-people.html role=role image=true %}
+        {% else %}
+          <div class="alert alert-warning small">
+            Role key "<strong>{{ role }}</strong>" not found in <code>_config.yml</code>.
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endfor %}
+</section>
+
+<section class="people row justify-content-between mt-4">
+  {% for role-group in page.no-picture-role-groups %}
+    <div class="col-md-{{ role-group.width }}">
+      {% for role in role-group.roles %}
+        {%- assign matching = site.roles | where: "key", role -%}
+        {% if matching.size > 0 %}
+          {% include role-people.html role=role image=false %}
+        {% else %}
+          <div class="alert alert-warning small">
+            Role key "<strong>{{ role }}</strong>" not found in <code>_config.yml</code>.
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  {% endfor %}
+</section>
+

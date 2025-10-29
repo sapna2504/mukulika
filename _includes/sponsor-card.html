@@ -1,0 +1,20 @@
+{%- assign s = include.sponsor -%}
+{%- assign img = s.logo | default: s.image | default: "" -%}
+{%- assign href = s.link | default: "#" -%}
+
+<div class="sponsor-card">
+  <a href="{{ href }}" target="_blank" rel="noopener noreferrer" title="{{ s.name | default: 'Sponsor' }}">
+    {%- if img != "" -%}
+      <img src="{{ img | relative_url }}"
+           alt="{{ s.alt | default: s.name | escape }}"
+           style="max-width: 100%; max-height: 300; object-fit: contain;"
+           class="img-fluid"
+           loading="lazy"
+           decoding="async" />
+    {%- else -%}
+      <div class="text-muted small" style="height:72px; display:flex; align-items:center; justify-content:center;">
+        {{ s.name | default: "Sponsor" }}
+      </div>
+    {%- endif -%}
+  </a>
+</div>

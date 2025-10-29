@@ -1,0 +1,21 @@
+# _data/sponsors.yml
+- name: "DST/SERB"
+  link: ""
+  logo: "/img/sponsors/dst.png"
+  alt: "Example University logo"
+
+- name: "ANRF"
+  link: ""
+  logo: "/img/sponsors/anrf.png"
+  alt: "Acme Research logo"
+
+- name: "Arista Network"
+  link: ""
+  logo: "/img/sponsors/arista-network.png"
+  alt: "Small Sponsor"
+  
+- name: "C3iHub"
+  link: ""
+  logo: "/img/sponsors/C3iHub.png"
+  alt: "Small Sponsor"
+ 

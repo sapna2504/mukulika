@@ -1,0 +1,40 @@
+{%- assign post = include.item -%}
+
+{%- comment -%}
+  Expected front matter fields on each post:
+  - title, date
+  - excerpt (optional) or use excerpt separator / automatic excerpt
+  - shortnews (true/false): if true, render short news (content only)
+  - icon (optional): font-awesome icon name
+{%- endcomment -%}
+
+{%- assign icon = post.icon | default: "newspaper-o" -%}
+
+{%- capture news %}
+  <div>
+    {%- if post.shortnews %}
+      {{ post.content | markdownify | strip | remove: '<p>' | remove: '</p>' }}
+    {%- else %}
+      <h5 class="news-title">
+        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+      </h5>
+      {%- if post.excerpt %}
+        {{ post.excerpt | markdownify | strip | remove: '<p>' | remove: '</p>' }}
+      {%- else %}
+        {{ post.content | excerpt | markdownify | strip | remove: '<p>' | remove: '</p>' }}
+      {%- endif %}
+      <br>
+      <a href="{{ post.url | relative_url }}">Read more &raquo;</a>
+    {%- endif %}
+  </div>
+{%- endcapture %}
+
+{%- capture header %}
+  <span class="fa fa-fw fa-{{ icon }}"></span>
+  <span class="date">{{ post.date | date: '%B %d, %Y' }}</span>
+{%- endcapture %}
+
+<li class="{% if post.shortnews %}shortnews{% endif %}">
+  {{ header }}
+  {{ news }}
+</li>
